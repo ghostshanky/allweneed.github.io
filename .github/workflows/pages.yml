@@ -2,7 +2,7 @@ name: 🚀 Build and Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'projects/**'
       - 'assets/**'
@@ -11,21 +11,19 @@ on:
       - 'package.json'
       - '.github/workflows/**'
   pull_request:
-    branches: [ main, master ]
+    branches: [ main ]
     paths:
       - 'projects/**'
       - 'assets/**'
   workflow_dispatch: # Allow manual trigger
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
   issues: write
   pull-requests: write
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -188,9 +186,6 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     name: 🚀 Build & Deploy
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -203,9 +198,6 @@ jobs:
           node-version: 18
           cache: 'npm'
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-
       - name: Install dependencies
         run: |
           npm ci --no-audit --no-fund --prefer-offline
@@ -216,20 +208,19 @@ jobs:
         run: |
           echo "🔨 Building all_we_need website..."
           npm run build
-          
+
           echo "📊 Build summary:"
           echo "- Generated $(find docs -name "*.html" | wc -l) HTML pages"
           echo "- Processed $(find projects -name "*.md" 2>/dev/null | wc -l) project files"
           echo "- Site size: $(du -sh docs | cut -f1)"
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './docs'
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Commit and push docs to main
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/
+          git diff --staged --quiet || git commit -m "🚀 Update site [skip ci]"
+          git push origin main
 
       - name: Update README stats
         run: |
@@ -266,7 +257,7 @@ jobs:
         run: |
           echo "🎉 Deployment completed successfully!"
           echo "🌐 Site URL: https://allweneed.github.io"
-          echo "📄 Pages deployed: $(find docs -name "*.html" | wc -l)"
+          echo "📄 Pages committed to main/docs/: $(find docs -name "*.html" | wc -l)"
           echo "🔍 Sitemap updated with latest projects"
           echo "📊 Search engines notified"
 
