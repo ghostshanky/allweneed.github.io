@@ -17,7 +17,7 @@ Entries are short, clear, and optionally include preview screenshots or live lin
 ---
 
 ## Repo Structure  
-
+```
 all_we_need/
 │
 ├── README.md          # Project overview  
@@ -28,7 +28,7 @@ all_we_need/
 │   └──...  
 └── assets/            # Screenshots & previews  
 
-
+```
 ---
 
 ## How to Get Started  
@@ -78,7 +78,7 @@ MIT License — free to use and share.
 ## 💡 Vision  
 A minimalist, high-quality platform where developers discover only the best — no noise. Simple words. Structured knowledge. Hidden gems, revealed.
 
----![Project Preview](https://allweneed.pages.dev/)
+---![Project Preview]()
 
 
 Want it even sleeker or with some extra flair? 😊
